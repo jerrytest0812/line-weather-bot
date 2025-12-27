@@ -11,4 +11,25 @@ response = requests.get(url, verify=False)
 if response.status_code == 200:
     data = response.json()
     print('Get data successfully')
+
+    location = data["records"]["location"][0]
+    city_name = location['locationName']
+    weather_elements = location['weatherElement']
+
+    print(f'-----{city_name} 36 小時天氣預報-----')
+
+    for element in weather_elements:
+        element_name = element['elementName']
+        element_value = element['time'][0]['parameter']['parameterName']
+        
+
+        
+        if element_name == 'Wx':
+            startTime = element['time'][0]['startTime']
+            print(f'時間{startTime}')
+            print(f'天氣現象:{element_value}')
+        elif element_name == 'PoP':
+            print(f'降雨機率:{element_value}%')
+        elif element_name == 'MinT':
+            print(f'最低溫:{element_value}°C')
     
