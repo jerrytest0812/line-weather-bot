@@ -12,24 +12,36 @@ if response.status_code == 200:
     data = response.json()
     print('Get data successfully')
 
-    location = data["records"]["location"][0]
-    city_name = location['locationName']
-    weather_elements = location['weatherElement']
-
-    print(f'-----{city_name} 36 小時天氣預報-----')
-
-    for element in weather_elements:
-        element_name = element['elementName']
-        element_value = element['time'][0]['parameter']['parameterName']
-        
-
-        
-        if element_name == 'Wx':
-            startTime = element['time'][0]['startTime']
-            print(f'時間{startTime}')
-            print(f'天氣現象:{element_value}')
-        elif element_name == 'PoP':
-            print(f'降雨機率:{element_value}%')
-        elif element_name == 'MinT':
-            print(f'最低溫:{element_value}°C')
+    locations = data["records"]["location"]
     
+    target_city = "臺中市"
+    found_index = -1
+
+    for i in range(len(locations)):
+        if locations[i]['locationName'] == target_city:
+            found_index = i
+            break
+    if found_index != -1 :
+        print(f'找到{target_city}了, found_index = {found_index}')
+
+        target_weather_elements = locations[i]['weatherElement']
+
+        for element in target_weather_elements:
+            name = element['elementName']
+
+            mapping = {
+                'Wx': '天氣現象',
+                'PoP': '降雨機率',
+                'MinT':'最低溫',
+                'CI':'體感',
+                'MaxT':'最高溫'
+            }
+
+            chinese_name = mapping.get(name, name)
+            value = element['time'][0]['parameter']['parameterName']
+            print(f'elementName:{name}({chinese_name}) -> {value}')
+    
+    else:
+        print('Not Found')
+
+
